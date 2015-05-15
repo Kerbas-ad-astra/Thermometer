@@ -7,14 +7,16 @@ namespace Thermometer
 	public class FlightGUI : MonoBehaviour
 	{
 		private Texture2D texture;
-		private MainWindow window;
-		private ApplicationLauncherButton button;
+		private static ApplicationLauncherButton button;
+		private static MainWindow window;
+		private static bool isOpen;
 
 		void Start()
 		{
+
 			texture = LoadPNG (Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/../app.png");
 			if (ApplicationLauncher.Ready) {
-				//onReady ();
+				onReady ();
 			} else {
 				GameEvents.onGUIApplicationLauncherReady.Add (onReady);
 			}
@@ -35,6 +37,7 @@ namespace Thermometer
 
 		public void onDestroyed() {
 			button = null;
+			isOpen = false;
 		}
 		public void onUnReady(GameScenes scene) {
 			if (button != null) {
@@ -46,15 +49,17 @@ namespace Thermometer
 			onDestroyed ();
 		}
 
-		public void onTrue() {
+		public static void onTrue() {
 			if (window == null) {
+				isOpen = true;
 				window = new MainWindow ();
 				window.initGui (new WindowSettings(100, 100, 200, 250, "ThermometerSettings.cfg"));
 			}
 		}
-		public void onFalse() {
+		public static void onFalse() {
 			window.remove ();
 			window = null;
+			isOpen = false;
 		}
 		public void onHover() {
 		}
@@ -75,6 +80,42 @@ namespace Thermometer
 				tex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
 			}
 			return tex;
+		}
+
+		public static void blizzyClick() {
+			if (FlightGUI.button != null) {
+				if(FlightGUI.isOpen){
+					FlightGUI.button.SetFalse();
+				} else {
+					FlightGUI.button.SetTrue();
+				}
+			} else {
+				if (isOpen) {
+					onFalse ();
+				} else {
+					onTrue ();
+				}
+			}
+		}
+	}
+
+	[KSPAddon(KSPAddon.Startup.EveryScene, false)]
+	class Blizzy : MonoBehaviour {
+		private IButton button;
+
+		public Blizzy() {
+		}
+
+		public void Start() {
+			button = ToolbarManager.Instance.add("Thermometer", "ThermometerBlizzyButton");
+			button.TexturePath = "Thermometer/blizzy";
+			button.ToolTip = "Enable/Disable the Thermometer information panel";
+			button.Visibility = new GameScenesVisibility(GameScenes.FLIGHT);
+			button.OnClick += e => {FlightGUI.blizzyClick();};
+		}
+
+		public void OnDestroy() {
+			button.Destroy();
 		}
 	}
 }

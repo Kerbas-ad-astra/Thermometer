@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Thermometer</RootNamespace>
     <AssemblyName>Thermometer</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -49,9 +49,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\ModuleThermometer.cs" />
     <Compile Include="Source\Temperature Unit.cs" />
-    <Compile Include="Source\FlightGUI.cs" />
     <Compile Include="Source\Window.cs" />
     <Compile Include="Source\ConfigNodeStorage.cs" />
+    <Compile Include="Source\ToolbarWrapper.cs" />
+    <Compile Include="Source\FlightGUI.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

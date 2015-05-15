@@ -23,6 +23,7 @@ namespace Thermometer
 				if (GUILayout.Button ("Curernt Unit: " + settings.currentUnit)) {
 					settings.nextUnit();
 				}
+				GUILayout.Label("Temperature Threshold: " + settings.getThreshold()*100 + "%");
 				settings.setThreshold (GUILayout.HorizontalSlider ((float)settings.getThreshold (), 0, 1));
 			}GUILayout.EndVertical();
 
