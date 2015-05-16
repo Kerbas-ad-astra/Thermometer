@@ -20,10 +20,11 @@ namespace Thermometer
 		public override void onWindow(int wID)
 		{
 			GUILayout.BeginVertical();{
-				if (GUILayout.Button ("Curernt Unit: " + settings.currentUnit)) {
+				if (GUILayout.Button ("Current Unit: " + settings.currentUnit)) {
 					settings.nextUnit();
 				}
-				GUILayout.Label("Temperature Threshold: " + settings.getThreshold()*100 + "%");
+				GUILayout.Space (10);
+				GUILayout.Label("Temperature Threshold: " + Math.Round(settings.getThreshold()*100,1) + "%");
 				settings.setThreshold (GUILayout.HorizontalSlider ((float)settings.getThreshold (), 0, 1));
 			}GUILayout.EndVertical();
 

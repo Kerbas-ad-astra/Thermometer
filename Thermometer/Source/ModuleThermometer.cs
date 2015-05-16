@@ -20,7 +20,11 @@ namespace Thermometer
 		public override void OnUpdate() {
 			temperature = getTemperature(this.part.temperature) + " " + DEGREE_SYMBOL + getUnitString();
 			maxTemperature = getTemperature(this.part.maxTemp) + " " + DEGREE_SYMBOL + getUnitString();
+
+			//On the off chance that this will eventually work: 
 			TemperatureGagueSystem.Instance.gaugeThreshold = (float)percentHighlight;
+			TemperatureGagueSystem.Instance.edgeHighlightThreshold = (float)percentHighlight;
+			TemperatureGagueSystem.Instance.temperatureGaguePrefab.gaugeThreshold = (float)percentHighlight;
 
 			//Thanks to Ferram4 for this highlighting section
 			if (this.part.temperature > this.part.maxTemp * percentHighlight) {
@@ -29,7 +33,7 @@ namespace Thermometer
 					hP = 1;
 				}
 
-				Color tintColor = new Color(1,0.1f,0.1f, hP);
+				Color tintColor = new Color(1,0.2f,0.2f, hP);
 
 				this.part.SetHighlightType (Part.HighlightType.AlwaysOn);
 				this.part.SetHighlightColor (tintColor);
