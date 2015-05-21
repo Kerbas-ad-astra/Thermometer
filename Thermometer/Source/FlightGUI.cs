@@ -8,11 +8,15 @@ namespace Thermometer
 	{
 		private Texture2D texture;
 		private static ApplicationLauncherButton button;
-		private static MainWindow window;
+		public static MainWindow window;
 		private static bool isOpen;
+		public static FlightGUI instance;
 
 		void Start()
 		{
+			FlightGUI.instance = this;
+
+			Debug.Log ("INSTANCE == this? " + (FlightGUI.instance == this));
 
 			texture = LoadPNG (Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/../app.png");
 			if (ApplicationLauncher.Ready) {
@@ -97,13 +101,25 @@ namespace Thermometer
 				}
 			}
 		}
+
+		public static void updateVisibilityStatus() {
+			if (window.getWindowsettings().isStockAppEnabled) {
+				FlightGUI.instance.onReady ();
+			} else {
+				if (button != null) {
+					ApplicationLauncher.Instance.RemoveModApplication (button);
+				}
+			}
+		}
 	}
 
 	[KSPAddon(KSPAddon.Startup.EveryScene, false)]
 	class Blizzy : MonoBehaviour {
-		private IButton button;
+		private static IButton button;
+		public static Blizzy instance;
 
 		public Blizzy() {
+			Blizzy.instance = this;
 		}
 
 		public void Start() {
@@ -115,7 +131,16 @@ namespace Thermometer
 		}
 
 		public void OnDestroy() {
-			button.Destroy();
+			if (button != null) {
+				button.Destroy ();
+			}
+		}
+		public static void updateVisibilityStatus() {
+			if (FlightGUI.window.getWindowsettings().isBlizzyAppEnabled) {
+				Blizzy.instance.Start ();
+			} else {
+				Blizzy.instance.OnDestroy ();
+			}
 		}
 	}
 }

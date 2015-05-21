@@ -6,12 +6,17 @@ namespace Thermometer
 
 	public class MainWindow : Window
 	{
+		GUIStyle toggleStyle;
+
 		public MainWindow() {
 			title = "Thermometer Settings";
 		}
 		public override void initGui(WindowSettings settings) {
 			settings.Load ();
 			base.initGui(settings);
+
+			toggleStyle = new GUIStyle(HighLogic.Skin.toggle);
+			toggleStyle.stretchWidth = true;
 		}
 		public override void remove() {
 			base.remove();
@@ -21,16 +26,41 @@ namespace Thermometer
 		{
 			GUILayout.BeginVertical();{
 				if (GUILayout.Button ("Current Unit: " + settings.currentUnit)) {
-					settings.nextUnit();
+					settings.nextUnit ();
 				}
 				GUILayout.Space (10);
-				GUILayout.Label("Temperature Threshold: " + Math.Round(settings.getThreshold()*100,1) + "%");
+				GUILayout.Label ("Temperature Threshold: " + Math.Round (settings.getThreshold () * 100, 1) + "%");
 				settings.setThreshold (GUILayout.HorizontalSlider ((float)settings.getThreshold (), 0, 1));
+				if (ToolbarManager.ToolbarAvailable){
+					GUILayout.Space (10);
+					if (GUILayout.Toggle (settings.isStockAppEnabled, "Stock App Button")) {
+						settings.isStockAppEnabled = true;
+					} else {
+						settings.isStockAppEnabled = false;
+					}
+					if (settings.isStockAppEnabled != settings.OldisStockAppEnabled) {
+						FlightGUI.updateVisibilityStatus ();
+						settings.OldisStockAppEnabled = settings.isStockAppEnabled;
+					}
+					if (GUILayout.Toggle (settings.isBlizzyAppEnabled, "Blizzy App Button")) {
+						settings.isBlizzyAppEnabled = true;
+					} else {
+						settings.isBlizzyAppEnabled = false;
+					}
+					if (settings.isBlizzyAppEnabled != settings.OldisBlizzyAppEnabled) {
+						Blizzy.updateVisibilityStatus ();
+						settings.OldisBlizzyAppEnabled = settings.isBlizzyAppEnabled;
+					}
+				}
 			}GUILayout.EndVertical();
 
 			base.onWindow (wID);
 		}
 		public override void closeSubWindow() {
+		}
+
+		public WindowSettings getWindowsettings() {
+			return settings;
 		}
 	}
 
@@ -120,6 +150,11 @@ namespace Thermometer
 
 		[Persistent] public TemperatureUnit currentUnit = TemperatureUnit.CELSIUS;
 		[Persistent] private double threshold = 0.75;
+		[Persistent] public bool isStockAppEnabled = true;
+		[Persistent] public bool isBlizzyAppEnabled = true;
+		[Persistent] public bool OldisStockAppEnabled = true;
+		[Persistent] public bool OldisBlizzyAppEnabled = true;
+
 
 		//Turn it into a rectangle
 		public Rect getRect() {
