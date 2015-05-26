@@ -11,9 +11,13 @@ namespace Thermometer
 		public static MainWindow window;
 		private static bool isOpen;
 		public static FlightGUI instance;
+		private static WindowSettings windowSettings;
 
 		void Start()
 		{
+			windowSettings = new WindowSettings (100, 100, 200, 250, "ThermometerSettings.cfg");
+			windowSettings.Load ();
+
 			FlightGUI.instance = this;
 
 			Debug.Log ("INSTANCE == this? " + (FlightGUI.instance == this));
@@ -27,6 +31,8 @@ namespace Thermometer
 
 			GameEvents.onGUIApplicationLauncherDestroyed.Add (onDestroyed);
 			GameEvents.onGUIApplicationLauncherUnreadifying.Add (onUnReady);
+
+			updateVisibilityStatus (windowSettings);
 		}
 
 		void OnDestroy()
@@ -34,7 +40,7 @@ namespace Thermometer
 		}
 
 		public void onReady() {
-			if (button == null) {
+			if (button == null && windowSettings.isStockAppEnabled) {
 				button = ApplicationLauncher.Instance.AddModApplication (onTrue, onFalse, onHover, onHoverOut, onEnable, onDisable, ApplicationLauncher.AppScenes.FLIGHT, texture);
 			}
 		}
@@ -57,7 +63,7 @@ namespace Thermometer
 			if (window == null) {
 				isOpen = true;
 				window = new MainWindow ();
-				window.initGui (new WindowSettings(100, 100, 200, 250, "ThermometerSettings.cfg"));
+				window.initGui (windowSettings);
 			}
 		}
 		public static void onFalse() {
@@ -102,8 +108,8 @@ namespace Thermometer
 			}
 		}
 
-		public static void updateVisibilityStatus() {
-			if (window.getWindowsettings().isStockAppEnabled) {
+		public static void updateVisibilityStatus(WindowSettings settings) {
+			if (settings.isStockAppEnabled) {
 				FlightGUI.instance.onReady ();
 			} else {
 				if (button != null) {
@@ -133,13 +139,6 @@ namespace Thermometer
 		public void OnDestroy() {
 			if (button != null) {
 				button.Destroy ();
-			}
-		}
-		public static void updateVisibilityStatus() {
-			if (FlightGUI.window.getWindowsettings().isBlizzyAppEnabled) {
-				Blizzy.instance.Start ();
-			} else {
-				Blizzy.instance.OnDestroy ();
 			}
 		}
 	}

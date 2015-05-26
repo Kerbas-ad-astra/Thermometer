@@ -39,17 +39,8 @@ namespace Thermometer
 						settings.isStockAppEnabled = false;
 					}
 					if (settings.isStockAppEnabled != settings.OldisStockAppEnabled) {
-						FlightGUI.updateVisibilityStatus ();
+						FlightGUI.updateVisibilityStatus (settings);
 						settings.OldisStockAppEnabled = settings.isStockAppEnabled;
-					}
-					if (GUILayout.Toggle (settings.isBlizzyAppEnabled, "Blizzy App Button")) {
-						settings.isBlizzyAppEnabled = true;
-					} else {
-						settings.isBlizzyAppEnabled = false;
-					}
-					if (settings.isBlizzyAppEnabled != settings.OldisBlizzyAppEnabled) {
-						Blizzy.updateVisibilityStatus ();
-						settings.OldisBlizzyAppEnabled = settings.isBlizzyAppEnabled;
 					}
 				}
 			}GUILayout.EndVertical();
@@ -151,9 +142,7 @@ namespace Thermometer
 		[Persistent] public TemperatureUnit currentUnit = TemperatureUnit.CELSIUS;
 		[Persistent] private double threshold = 0.75;
 		[Persistent] public bool isStockAppEnabled = true;
-		[Persistent] public bool isBlizzyAppEnabled = true;
-		[Persistent] public bool OldisStockAppEnabled = true;
-		[Persistent] public bool OldisBlizzyAppEnabled = true;
+		public bool OldisStockAppEnabled = true;
 
 
 		//Turn it into a rectangle
