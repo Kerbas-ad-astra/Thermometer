@@ -129,11 +129,15 @@ namespace Thermometer
 		}
 
 		public void Start() {
-			button = ToolbarManager.Instance.add("Thermometer", "ThermometerBlizzyButton");
-			button.TexturePath = "Thermometer/blizzy";
-			button.ToolTip = "Enable/Disable the Thermometer information panel";
-			button.Visibility = new GameScenesVisibility(GameScenes.FLIGHT);
-			button.OnClick += e => {FlightGUI.blizzyClick();};
+			if (ToolbarManager.ToolbarAvailable) {
+				button = ToolbarManager.Instance.add ("Thermometer", "ThermometerBlizzyButton");
+				button.TexturePath = "Thermometer/blizzy";
+				button.ToolTip = "Enable/Disable the Thermometer information panel";
+				button.Visibility = new GameScenesVisibility (GameScenes.FLIGHT);
+				button.OnClick += e => {
+					FlightGUI.blizzyClick ();
+				};
+			}
 		}
 
 		public void OnDestroy() {
