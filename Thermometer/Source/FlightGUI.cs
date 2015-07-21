@@ -8,11 +8,19 @@ namespace Thermometer
 	{
 		private Texture2D texture;
 		private static ApplicationLauncherButton button;
-		private static MainWindow window;
+		public static MainWindow window;
 		private static bool isOpen;
+		public static FlightGUI instance;
+		private static WindowSettings windowSettings;
 
 		void Start()
 		{
+			windowSettings = new WindowSettings (100, 100, 200, 250, "ThermometerSettings.cfg");
+			windowSettings.Load ();
+
+			FlightGUI.instance = this;
+
+			Debug.Log ("INSTANCE == this? " + (FlightGUI.instance == this));
 
 			texture = LoadPNG (Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/../app.png");
 			if (ApplicationLauncher.Ready) {
@@ -23,6 +31,8 @@ namespace Thermometer
 
 			GameEvents.onGUIApplicationLauncherDestroyed.Add (onDestroyed);
 			GameEvents.onGUIApplicationLauncherUnreadifying.Add (onUnReady);
+
+			updateVisibilityStatus (windowSettings);
 		}
 
 		void OnDestroy()
@@ -30,7 +40,7 @@ namespace Thermometer
 		}
 
 		public void onReady() {
-			if (button == null) {
+			if (button == null && windowSettings.isStockAppEnabled) {
 				button = ApplicationLauncher.Instance.AddModApplication (onTrue, onFalse, onHover, onHoverOut, onEnable, onDisable, ApplicationLauncher.AppScenes.FLIGHT, texture);
 			}
 		}
@@ -53,7 +63,7 @@ namespace Thermometer
 			if (window == null) {
 				isOpen = true;
 				window = new MainWindow ();
-				window.initGui (new WindowSettings(100, 100, 200, 250, "ThermometerSettings.cfg"));
+				window.initGui (windowSettings);
 			}
 		}
 		public static void onFalse() {
@@ -97,25 +107,43 @@ namespace Thermometer
 				}
 			}
 		}
+
+		public static void updateVisibilityStatus(WindowSettings settings) {
+			if (settings.isStockAppEnabled) {
+				FlightGUI.instance.onReady ();
+			} else {
+				if (button != null) {
+					ApplicationLauncher.Instance.RemoveModApplication (button);
+				}
+			}
+		}
 	}
 
 	[KSPAddon(KSPAddon.Startup.EveryScene, false)]
 	class Blizzy : MonoBehaviour {
-		private IButton button;
+		private static IButton button;
+		public static Blizzy instance;
 
 		public Blizzy() {
+			Blizzy.instance = this;
 		}
 
 		public void Start() {
-			button = ToolbarManager.Instance.add("Thermometer", "ThermometerBlizzyButton");
-			button.TexturePath = "Thermometer/blizzy";
-			button.ToolTip = "Enable/Disable the Thermometer information panel";
-			button.Visibility = new GameScenesVisibility(GameScenes.FLIGHT);
-			button.OnClick += e => {FlightGUI.blizzyClick();};
+			if (ToolbarManager.ToolbarAvailable) {
+				button = ToolbarManager.Instance.add ("Thermometer", "ThermometerBlizzyButton");
+				button.TexturePath = "Thermometer/blizzy";
+				button.ToolTip = "Enable/Disable the Thermometer information panel";
+				button.Visibility = new GameScenesVisibility (GameScenes.FLIGHT);
+				button.OnClick += e => {
+					FlightGUI.blizzyClick ();
+				};
+			}
 		}
 
 		public void OnDestroy() {
-			button.Destroy();
+			if (button != null) {
+				button.Destroy ();
+			}
 		}
 	}
 }

@@ -18,8 +18,8 @@ namespace Thermometer
 		public String maxTemperature = "";
 
 		public override void OnUpdate() {
-			temperature = getTemperature(this.part.temperature) + " " + DEGREE_SYMBOL + getUnitString();
-			maxTemperature = getTemperature(this.part.maxTemp) + " " + DEGREE_SYMBOL + getUnitString();
+			temperature = getTemperature(this.part.temperature) + " " + getUnitString();
+			maxTemperature = getTemperature(this.part.maxTemp) + " " + getUnitString();
 
 			//On the off chance that this will eventually work: 
 			TemperatureGagueSystem.Instance.gaugeThreshold = (float)percentHighlight;
@@ -66,9 +66,9 @@ namespace Thermometer
 		private String getUnitString() {
 			switch (tempUnit) {
 			case TemperatureUnit.CELSIUS:
-				return "C";
+				return DEGREE_SYMBOL + "C";
 			case TemperatureUnit.FAHRENHEIT:
-				return "F";
+				return DEGREE_SYMBOL + "F";
 			case TemperatureUnit.KELVIN:
 				return "K";
 			}
